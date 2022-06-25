@@ -44,50 +44,6 @@ var saveTasks = function() {
   localStorage.setItem("tasks", JSON.stringify(tasks));
 };
 
-$(".list-group").on("click", "p", function() {
-  var text = $(this)
-  .text()
-  .trim();
-
-  var textInput = $("<textarea>")
-  .addClass("form-control")
-  .val(text);
-
-  $(this).replaceWith(textInput);
-  textInput.trigger("focus");
-});
-
-$(".list-group").on("blur", "textarea", function() {
-// get the textarea's current value/text
-var text = $(this)
-.val()
-.trim;
-
-// get the parent ul's id attribute
-var status = $(this)
-.closest(".list-group")
-.attr("id")
-.replace("list-", "");
-
-// get the task's position in the list of other li elements
-var index = $(this)
-.closest(".list-group-item")
-index();
-
-tasks[status][index].text = text;
-saveTasks();
-
-// recreate p element
-var taskP = $("<p>")
-.addClass("m-1")
-.text(text);
-
-// replace textarea with p element
-$(this).replaceWith(taskP);
-});
-
-
-
 // modal was triggered
 $("#task-form-modal").on("show.bs.modal", function() {
   // clear values
@@ -122,13 +78,51 @@ $("#task-form-modal .btn-primary").click(function() {
   }
 });
 
-// remove all tasks
-$("#remove-tasks").on("click", function() {
-  for (var key in tasks) {
-    tasks[key].length = 0;
-    $("#list-" + key).empty();
-  }
-  saveTasks();
+// task test was clicked
+$(".list-group").on("click", "p", function() {
+  // get current text of p element
+  var text = $(this)
+  .text()
+  .trim();
+
+  // replace p element with a new textarea
+  var textInput = $("<textarea>")
+  .addClass("form-control")
+  .val(text);
+  $(this).replaceWith(textInput);
+  
+  // auto focus new element
+  textInput.trigger("focus");
+});
+
+// editable field was un-focused
+$(".list-group").on("blur", "textarea", function() {
+// get the textarea's current value/text
+var text = $(this)
+.val()
+.trim;
+
+// get the parent ul's id attribute
+var status = $(this)
+.closest(".list-group")
+.attr("id")
+.replace("list-", "");
+// get the task's position in the list of other li elements
+var index = $(this)
+.closest(".list-group-item")
+index();
+
+// update task in array and re-save to localstorage
+tasks[status][index].text = text;
+saveTasks();
+
+// recreate p element
+var taskP = $("<p>")
+.addClass("m-1")
+.text(text);
+
+// replace textarea with p element
+$(this).replaceWith(taskP);
 });
 
 // due date was clicked
@@ -143,7 +137,6 @@ $(".list-group").on("click", "span", function() {
     .attr("type", "text")
     .addClass("form-control")
     .val(date);
-
   // swap out elements
   $(this).replaceWith(dateInput);
 
@@ -180,6 +173,15 @@ $(".list-group").on("blur", "input[type='text']", function() {
 
   // replace input with span element
   $(this).replaceWith(taskSpan);
+});
+
+// remove all tasks
+$("#remove-tasks").on("click", function() {
+  for (var key in tasks) {
+    tasks[key].length = 0;
+    $("#list-" + key).empty();
+  }
+  saveTasks();
 });
 
 // load tasks for the first time
